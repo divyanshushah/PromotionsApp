@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace PromotionsApp.Promotion.Repository
 {
+    /// <summary>
+    /// Pulls Data from DB to get Active Promotions and Inventory  Price
+    /// </summary>
   public  class DbRepository : IRepository
     {
         public ActivePromotionsDto GetActivePromotions()
@@ -44,7 +47,6 @@ namespace PromotionsApp.Promotion.Repository
             }
             };
             return UnitPriceMapping;
-
         }
     }
 }

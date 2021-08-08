@@ -1,35 +1,45 @@
-﻿using PromotionsApp.Promotion.Core.Entity;
+﻿using PromotionsApp.Promotion.Domain.Entity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PromotionsApp.Promotion.Domain.Rules
 {
-   public class PromotionRuleEngine : IPromotionsRules
+    public class PromotionRuleEngine : IPromotionsRules
     {
         public List<IRule> _rules { get; set; }
         public PromotionRuleEngine()
         {
-           
+
         }
-        
-        public void AttachRules(IEnumerable< IRule> rules)
+        /// <summary>
+        /// Add All rules to Rule Engine
+        /// </summary>
+        /// <param name="rules"></param>
+        public void AttachRules(IEnumerable<IRule> rules)
         {
             _rules = new List<IRule>();
-            _rules.AddRange(rules);
+            foreach (var rule in rules)
+            {
+                if (rule.IsActive) _rules.Add(rule);
+            }
+
         }
+        /// <summary>
+        /// Apply Promotion on Check Out cart to calcute price
+        /// Total Price can be found in cartDto.TotalPrice
+        /// </summary>
+        /// <param name="cartDto"></param>
+        /// <returns></returns>
         public Task<int> ApplyPromotions(CheckOutCartDto cartDto)
         {
-            int price = 1;
-           if(cartDto.CheckOutCart.Count <1)
+            if (cartDto.CheckOutCart.Count < 1)
             {
-                throw new Exception("Cart is Empty. Cannot Process");
+                throw new Exception("Cart is Empty.Cannot Process");
             }
             foreach (var rule in _rules)
             {
-                if (rule.IsActive && rule.IsMatch(cartDto)) rule.Apply(cartDto, price);
+                if (rule.IsActive && rule.IsMatch(cartDto)) rule.Apply(cartDto);
             }
             return Task.FromResult(cartDto.TotalPrice);
         }

@@ -1,10 +1,6 @@
-﻿using PromotionsApp.Promotion.Core.Entity;
+﻿using PromotionsApp.Promotion.Domain.Entity;
 using PromotionsApp.Promotion.Repository;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PromotionsApp.Promotion.Domain.Rules
 {
@@ -18,7 +14,7 @@ namespace PromotionsApp.Promotion.Domain.Rules
         }
         public bool IsActive => true;
 
-        public int Apply(CheckOutCartDto skuDto, int price)
+        public void Apply(CheckOutCartDto skuDto)
         {
             int computedPrice = 0;
             var cartSkus = skuDto.CheckOutCart.ToList();
@@ -36,7 +32,6 @@ namespace PromotionsApp.Promotion.Domain.Rules
                     skuDto.TotalPrice += computedPrice;
                 }
             }
-            return computedPrice;
         }
 
         public bool IsMatch(CheckOutCartDto skuDto)
@@ -50,7 +45,6 @@ namespace PromotionsApp.Promotion.Domain.Rules
                 if (promosku.Contains(sku))
                 {
                     skuDto?.OfferApplicableOn?.Add(sku);
-                 //var skuitem=   skuDto?.CheckOutCart.Where(x => x.SkuName == sku).ToList();
                     IsMatch = true;
                 }               
             }

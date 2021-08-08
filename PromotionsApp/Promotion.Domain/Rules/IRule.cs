@@ -1,9 +1,5 @@
-﻿using PromotionsApp.Promotion.Core.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PromotionsApp.Promotion.Domain.Entity;
+
 
 namespace PromotionsApp.Promotion.Domain.Rules
 {
@@ -11,6 +7,6 @@ namespace PromotionsApp.Promotion.Domain.Rules
     {
         bool IsActive { get;}
         bool IsMatch(CheckOutCartDto skuDto);
-        int Apply(CheckOutCartDto skuDto, int price);
+        void Apply(CheckOutCartDto skuDto);
     }
 }

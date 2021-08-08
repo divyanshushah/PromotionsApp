@@ -1,10 +1,8 @@
-﻿using PromotionsApp.Promotion.Core.Entity;
-using PromotionsApp.Promotion.Core.Rules;
+﻿using PromotionsApp.Promotion.Domain.Entity;
+using PromotionsApp.Promotion.Domain.Rules;
+using PromotionsApp.Promotion.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PromotionsApp.Promotion.GUI
 {
@@ -14,13 +12,18 @@ namespace PromotionsApp.Promotion.GUI
         {
             Console.WriteLine("My Promotion App");
             var promotionEngine = new PromotionRuleEngine();
+            promotionEngine.AttachRules(new List<IRule> { new NunitsSkuRule(new DbRepository()) ,
+            new BasicRule(new DbRepository())});
             var cartDto = new CheckOutCartDto()
             {
                 CheckOutCart = new List<Sku>()
-            { new Sku {  SkuName = 'A', Quantity =1}  },
-                TotalPrice = 1
+            { new Sku {  SkuName = 'A', Quantity =5} ,
+              new Sku {  SkuName = 'B', Quantity =5},
+              new Sku {  SkuName = 'C', Quantity =1} },
+                TotalPrice = 0
             };
-            var totalAmount = promotionEngine.ApplyPromotions(cartDto);
+            var totalAmount = promotionEngine.ApplyPromotions(cartDto).Result;
+            Console.WriteLine($"Total Price :{totalAmount}");
             Console.ReadLine();
         }
     }

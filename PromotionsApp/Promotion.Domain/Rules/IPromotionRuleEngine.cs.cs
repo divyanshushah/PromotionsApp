@@ -1,13 +1,10 @@
-﻿using PromotionsApp.Promotion.Core.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿
+using PromotionsApp.Promotion.Domain.Entity;
 using System.Threading.Tasks;
 
 namespace PromotionsApp.Promotion.Domain.Rules
 {
-   public interface IPromotionsRules
+    public interface IPromotionsRules
     {
        Task< int> ApplyPromotions(CheckOutCartDto skuDto);
 

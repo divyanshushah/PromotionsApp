@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace PromotionsApp.Promotion.Domain.Entity
 {
-   public class InventoryDto
+    /// <summary>
+    /// SKU Price details
+    /// </summary>
+    public class InventoryDto
     {
+        /// <summary>
+        ///  List of SKU and Price mapping
+        /// </summary>
         public Dictionary<char,int> UnitPriceDetails { get; set; }
     }
 }
