@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace PromotionsApp.Promotion.Core.Rules
 {
-    interface IPromotionsRules
+   public interface IPromotionsRules
     {
-        int ApplyPromotions(SkuDto skuDto);
+       Task< int> ApplyPromotions(CheckOutCartDto skuDto);
 
     }
 }

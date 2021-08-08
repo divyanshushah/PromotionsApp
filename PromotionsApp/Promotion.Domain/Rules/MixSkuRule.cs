@@ -7,19 +7,14 @@ using System.Threading.Tasks;
 
 namespace PromotionsApp.Promotion.Core.Rules
 {
-    class PromotionRuleEngine : IPromotionsRules
+   public class MixSkuRule : IRule
     {
-        public List<IRule> _rules { get; set; }
-        public PromotionRuleEngine()
+        public int Apply(CheckOutCartDto skuDto, int price)
         {
+            throw new NotImplementedException();
+        }
 
-        }
-        
-        public void AttachRules( IEnumerable< IRule> rules)
-        {
-            _rules.AddRange(rules);
-        }
-        public int ApplyPromotions(SkuDto skuDto)
+        public bool IsMatch(CheckOutCartDto skuDto)
         {
             throw new NotImplementedException();
         }

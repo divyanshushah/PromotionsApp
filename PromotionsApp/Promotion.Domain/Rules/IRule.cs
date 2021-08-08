@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace PromotionsApp.Promotion.Core.Rules
 {
-    interface IRule
+   public interface IRule
     {
-        bool IsMatch(SkuDto skuDto);
-        int Apply(SkuDto skuDto, int price);
+        bool IsMatch(CheckOutCartDto skuDto);
+        int Apply(CheckOutCartDto skuDto, int price);
     }
 }
