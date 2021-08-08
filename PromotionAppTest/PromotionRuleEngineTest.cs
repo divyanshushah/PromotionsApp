@@ -1,5 +1,5 @@
 using FluentAssertions;
-using PromotionsApp.Promotion.Core.Entity;
+using PromotionsApp.Promotion.Domain.Entity;
 using PromotionsApp.Promotion.Domain.Rules;
 using System;
 using System.Collections;
@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Xunit;
 using Moq;
 using PromotionsApp.Promotion.Repository;
-using PromotionsApp.Promotion.Domain.Entity;
 
 namespace PromotionAppTest
 {
@@ -49,11 +48,11 @@ namespace PromotionAppTest
     public class PromotionRuleEngineTest
     {
         private PromotionRuleEngine _promotionRuleEngine = new PromotionRuleEngine();
-        private Mock<IRepository> _mockDbRepo ;
+        private Mock<IRepository> _mockDbRepo;
 
         public PromotionRuleEngineTest()
         {
-             _mockDbRepo = new Mock<IRepository>();
+            _mockDbRepo = new Mock<IRepository>();
             _mockDbRepo.Setup(x => x.GetInventoryPrice()).Returns(new InventoryDto
             {
                 UnitPriceDetails = new Dictionary<char, int>
@@ -105,20 +104,20 @@ namespace PromotionAppTest
             };
             _promotionRuleEngine.AttachRules(new List<IRule> { new NunitsSkuRule(_mockDbRepo.Object) ,
             new BasicRule(new DbRepository())});
-            var res= await _promotionRuleEngine.ApplyPromotions(cartDto);
+            var res = await _promotionRuleEngine.ApplyPromotions(cartDto);
             res.Should().BeGreaterThan(0);
 
         }
         [Fact]
         public async Task Cart_Fits_ScenarioA()
         {
-             CheckOutCartDto cartDtoSenarioA = new CheckOutCartDto()
+            CheckOutCartDto cartDtoSenarioA = new CheckOutCartDto()
             {
                 CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=1},
                     new Sku() { SkuName = 'B', Quantity = 1 }, new Sku() { SkuName = 'C', Quantity=1} }
             };
             _promotionRuleEngine.AttachRules(new List<IRule> { new NunitsSkuRule(_mockDbRepo.Object) ,
-            new BasicRule(new DbRepository())});
+            new BasicRule(_mockDbRepo.Object)});
             var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioA);
             res.Should().Be(100);
 
@@ -126,12 +125,14 @@ namespace PromotionAppTest
         [Fact]
         public async Task Cart_Fits_ScenarioB()
         {
-             CheckOutCartDto cartDtoSenarioB = new CheckOutCartDto()
+            CheckOutCartDto cartDtoSenarioB = new CheckOutCartDto()
             {
                 CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=5},
                     new Sku() { SkuName = 'B', Quantity = 5 }, new Sku() { SkuName = 'C', Quantity=1} }
             };
-        var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioB);
+            _promotionRuleEngine.AttachRules(new List<IRule> { new NunitsSkuRule(_mockDbRepo.Object) ,
+            new BasicRule(_mockDbRepo.Object)});
+            var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioB);
             res.Should().Be(370);
 
         }
@@ -141,10 +142,47 @@ namespace PromotionAppTest
             CheckOutCartDto cartDtoSenarioC = new CheckOutCartDto()
             {
                 CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=3},
-                    new Sku() { SkuName = 'B', Quantity = 5 }, new Sku() { SkuName = 'D', Quantity=1} }
+                    new Sku() { SkuName = 'B', Quantity = 5 },  new Sku() { SkuName = 'C', Quantity=1} ,
+                    new Sku() { SkuName = 'D', Quantity=1} }
             };
+            _promotionRuleEngine.AttachRules(new List<IRule> { new NunitsSkuRule(_mockDbRepo.Object) ,
+                new MixSkuRule(_mockDbRepo.Object),
+            new BasicRule(_mockDbRepo.Object)});
             var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioC);
             res.Should().Be(280);
+
+        }
+
+        [Fact(DisplayName ="3 A, 5 B, 1 D")]
+        public async Task Cart_Fits_ScenarioD()
+        {
+            CheckOutCartDto cartDtoSenarioC = new CheckOutCartDto()
+            {
+                CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=3},
+                    new Sku() { SkuName = 'B', Quantity = 5 }, new Sku() { SkuName = 'D', Quantity=1} }
+            };
+            _promotionRuleEngine.AttachRules(new List<IRule> { new NunitsSkuRule(_mockDbRepo.Object) ,
+                new MixSkuRule(_mockDbRepo.Object),
+            new BasicRule(_mockDbRepo.Object)});
+            var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioC);
+            res.Should().Be(265);
+
+        }
+
+        [Fact(DisplayName = "3 A, 5 B, 1 C , 2 D")]
+        public async Task Cart_Fits_ScenarioE()
+        {
+            CheckOutCartDto cartDtoSenarioC = new CheckOutCartDto()
+            {
+                CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=3},
+                    new Sku() { SkuName = 'B', Quantity = 5 },new Sku() { SkuName = 'C', Quantity=1},
+                    new Sku() { SkuName = 'D', Quantity= 2} }
+            };
+            _promotionRuleEngine.AttachRules(new List<IRule> { new NunitsSkuRule(_mockDbRepo.Object) ,
+                new MixSkuRule(_mockDbRepo.Object),
+            new BasicRule(_mockDbRepo.Object)});
+            var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioC);
+            res.Should().Be(295);
 
         }
 
