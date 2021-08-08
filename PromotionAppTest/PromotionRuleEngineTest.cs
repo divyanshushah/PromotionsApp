@@ -10,7 +10,7 @@ using Xunit;
 namespace PromotionAppTest
 {
 
-    public class TestDataGenerator : IEnumerable<object[]>
+    public class ShoppingCartGenerator : IEnumerable<object[]>
     {
         public static IEnumerable<object[]> GetPersonFromDataGenerator()
         {
@@ -78,14 +78,51 @@ namespace PromotionAppTest
         {
             var cartDto = new CheckOutCartDto()
             {
-                CheckOutCart = new List<Sku>()
+                CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=1},
+                    new Sku() { SkuName = 'B', Quantity = 1 }, new Sku() { SkuName = 'C', Quantity=1} }
             };
             var res= await _promotionRuleEngine.ApplyPromotions(cartDto);
             res.Should().BeGreaterThan(0);
 
         }
-    
-}
+        [Fact]
+        public async Task Cart_Fits_ScenarioA()
+        {
+             CheckOutCartDto cartDtoSenarioA = new CheckOutCartDto()
+            {
+                CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=1},
+                    new Sku() { SkuName = 'B', Quantity = 1 }, new Sku() { SkuName = 'C', Quantity=1} }
+            };
+        var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioA);
+            res.Should().Be(100);
+
+        }
+        [Fact]
+        public async Task Cart_Fits_ScenarioB()
+        {
+             CheckOutCartDto cartDtoSenarioB = new CheckOutCartDto()
+            {
+                CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=5},
+                    new Sku() { SkuName = 'B', Quantity = 5 }, new Sku() { SkuName = 'C', Quantity=1} }
+            };
+        var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioB);
+            res.Should().Be(370);
+
+        }
+        [Fact]
+        public async Task Cart_Fits_ScenarioC()
+        {
+            CheckOutCartDto cartDtoSenarioC = new CheckOutCartDto()
+            {
+                CheckOutCart = new List<Sku>() { new Sku() { SkuName = 'A', Quantity=3},
+                    new Sku() { SkuName = 'B', Quantity = 5 }, new Sku() { SkuName = 'D', Quantity=1} }
+            };
+            var res = await _promotionRuleEngine.ApplyPromotions(cartDtoSenarioC);
+            res.Should().Be(280);
+
+        }
+
+    }
 }
 
 
