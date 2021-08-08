@@ -5,18 +5,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PromotionsApp.Promotion.Core.Rules
+namespace PromotionsApp.Promotion.Domain.Rules
 {
    public class PromotionRuleEngine : IPromotionsRules
     {
         public List<IRule> _rules { get; set; }
         public PromotionRuleEngine()
         {
-
+           
         }
         
-        public void AttachRules( IEnumerable< IRule> rules)
+        public void AttachRules(IEnumerable< IRule> rules)
         {
+            _rules = new List<IRule>();
             _rules.AddRange(rules);
         }
         public Task<int> ApplyPromotions(CheckOutCartDto cartDto)
@@ -28,7 +29,7 @@ namespace PromotionsApp.Promotion.Core.Rules
             }
             foreach (var rule in _rules)
             {
-                if (rule.IsMatch(cartDto)) rule.Apply(cartDto, price);
+                if (rule.IsActive && rule.IsMatch(cartDto)) rule.Apply(cartDto, price);
             }
             return Task.FromResult(cartDto.TotalPrice);
         }

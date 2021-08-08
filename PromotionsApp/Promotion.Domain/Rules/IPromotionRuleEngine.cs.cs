@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PromotionsApp.Promotion.Core.Rules
+namespace PromotionsApp.Promotion.Domain.Rules
 {
    public interface IPromotionsRules
     {
